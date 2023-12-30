@@ -132,6 +132,10 @@ split
 	// Checks if the game is reloading.
 	vars.reloading = current.runtime == 0 || (current.runtime < old.runtime);
 
+	// TEVI tends to reassign its arrays, so this will avoid null object errors.
+	if (current.eventArray == null || old.eventArray == null || current.itemArray == null || old.itemArray == null)
+    	return false;
+
 	/*
 		Splits the game when you beat a particular boss.
 		See https://rentry.co/TEVI_IDs#event-ids for event IDs
