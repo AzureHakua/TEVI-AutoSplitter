@@ -1,8 +1,8 @@
 state("TEVI", "TEVI")
 {
-	// variables
 	float truntime: "mono-2.0-bdwgc.dll", 0x007280F8, 0xC0, 0xE4C;
 	float runtime: "mono-2.0-bdwgc.dll", 0x007280F8, 0xC0, 0xE64;
+	byte1664 eventArray: "UnityPlayer.dll", 0x01B29AD8, 0x10, 0x10, 0x28, 0x28, 0x68, 0x50, 0x20;
 	byte1664 itemArray: "UnityPlayer.dll", 0x01B29AD8, 0x10, 0x10, 0x28, 0x28, 0x68, 0x58, 0x20;
 }
 
@@ -10,25 +10,47 @@ startup
 {
 	settings.Add("bosses", true, "Bosses")
 	settings.Add("items", true, "Items");
-	settings.CurrentDefaultParent = "bosses";
-		settings.Add("all", true "All Bosses");
+	settings.CurrentDefaultParent = "bosses";          // Boss End ID
+		settings.Add("ribauld", true "Ribauld");               // 120
+		settings.Add("katu", true "Katu");                     // 124
+		settings.Add("vena", true "Vena");                     // 292
+		settings.Add("caprice", true "Caprice");               // 125
+		settings.Add("barados", true "Barados");               // 123
+		settings.Add("frankie", true "Frankie");               // 126
+		settings.Add("thetis", true "Thetis");                 // 129
+		settings.Add("roleo", true "Roleo");                   // 127
+		settings.Add("lily", true "Lily");                     // 121
+		settings.Add("malphage", true "Malphage");             // 128
+		settings.Add("eidolon", true "Eidolon");               // 135
+		settings.Add("tybrious", true "Tybrious");             // 153
+		settings.Add("memloch", true "Memloch");               // 138
+		settings.Add("fray", true "Fray");                     // 155
+		settings.Add("alius", true "Illusion Alius");          // 242
+		settings.Add("amaryllis", true "Amaryllis");           // 177
+		settings.Add("charon", true "Charon");                 // 247
+		settings.Add("jezbelle", true "Jezbelle");             // 217 
+		settings.Add("jethro", true "Jethro");                 // 239
+		settings.Add("cyril", true "Cyril");                   // 271
+		settings.Add("vassago", true "Vassago");               // 174
+		settings.Add("tahlia", true "Tahlia");                 // 290
+		settings.Add("revenance", true "Revenance");           // 294
 	settings.CurrentDefaultParent = "items";               // Item ID
 		settings.Add("lineBomb", false, "Cross Bomb");          // 24
 		settings.Add("areaBomb", false, "Cluster Bomb");        // 25
 		settings.Add("bombFuel", false, "Bomb Fuel");           // 26
+		settings.Add("bombLengthExtend", false, "Combustible"); // 41
 		settings.Add("hiJump", false, "Rabi Boots");            // 27
-		settings.Add("slide", true, "Slide");                   // 29
 		settings.Add("wallJump", false, "Wall Jump");           // 30
 		settings.Add("doubleJump", false, "Double Jump");       // 31
 		settings.Add("jetpack", false, "Jetpack");              // 32
-		settings.Add("waterMovement", false, "Hydrodynamo");    // 33
+		settings.Add("slide", true, "Slide");                   // 29
+		settings.Add("airSlide", false, "Airy Powder");         // 64
+		settings.Add("airDash", true, "Air Dash");              // 42
 		settings.Add("mask", false, "Decay Mask");              // 35
 		settings.Add("antiDecay", false, "Decay Potion");       // 40
-		settings.Add("bombLengthExtend", false, "Combustible"); // 41
-		settings.Add("airDash", true, "Air Dash");              // 42
+		settings.Add("waterMovement", false, "Hydrodynamo");    // 33
 		settings.Add("tempRing", false, "Equilibrium Ring");    // 48
 		settings.Add("rotater", false, "Vortex Gloves");        // 63
-		settings.Add("airSlide", false, "Airy Powder");         // 64
 }
 
 init
@@ -43,13 +65,12 @@ init
 
 	// vars.xtile = (int)(current.xpos/1280) + current.mapid * 25;
 	// vars.ytile = (int)(current.ypos/720);
-	// vars.hasSplit = new bool[100];
 
-	// timer variables
+	// Timer Variables
 	vars.reloading = false;
 	vars.timer = 0;
 	vars.timerIncrease = 0;
-	vars.TIMERFAILSAFE = 5;  // set the failsafe for timer jumps
+	vars.TIMERFAILSAFE = 5;  // Set the failsafe for timer jumps
 }
 
 update
@@ -82,7 +103,6 @@ start
 	if (current.truntime > 0 && old.truntime == 0) {
 		vars.timer = 0;
 		vars.timerIncrease = 0;
-		// vars.hasSplit = new bool[100];
 		return true;
 	}
 }
@@ -94,7 +114,6 @@ reset
 	if (TODO) {
 		vars.timer = 0;
 		vars.timerIncrease = 0;
-		// vars.hasSplit = new bool[100];
 		return true;
 	} */
 	return false;
@@ -102,12 +121,12 @@ reset
 
 split
 {
-	// checks if the game is reloading
+	// Checks if the game is reloading.
 	vars.reloading = current.runtime == 0 || (current.runtime < old.runtime);
 
 	/*
-		splits the game when you obtain a particular item
-		see ItemList.Type in the IDs sheet for item IDs
+		Splits the game when you obtain a particular item.
+		See https://rentry.co/TEVI_IDs#item-ids for item IDs
 	*/
 	if(settings["lineBomb"]
 		&& current.itemArray[24] == 1
