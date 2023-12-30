@@ -4,36 +4,38 @@ state("TEVI", "TEVI")
 	float runtime: "mono-2.0-bdwgc.dll", 0x007280F8, 0xC0, 0xE64;
 	byte1664 eventArray: "UnityPlayer.dll", 0x01B29AD8, 0x10, 0x10, 0x28, 0x28, 0x68, 0x50, 0x20;
 	byte1664 itemArray: "UnityPlayer.dll", 0x01B29AD8, 0x10, 0x10, 0x28, 0x28, 0x68, 0x58, 0x20;
+	// TODO: Find Music Address, Title Music == 3
 }
 
 startup
 {
-	settings.Add("bosses", true, "Bosses")
+	settings.Add("bosses", true, "Bosses");
 	settings.Add("items", true, "Items");
-	settings.CurrentDefaultParent = "bosses";          // Boss End ID
-		settings.Add("ribauld", true "Ribauld");               // 120
-		settings.Add("katu", true "Katu");                     // 124
-		settings.Add("vena", true "Vena");                     // 292
-		settings.Add("caprice", true "Caprice");               // 125
-		settings.Add("barados", true "Barados");               // 123
-		settings.Add("frankie", true "Frankie");               // 126
-		settings.Add("thetis", true "Thetis");                 // 129
-		settings.Add("roleo", true "Roleo");                   // 127
-		settings.Add("lily", true "Lily");                     // 121
-		settings.Add("malphage", true "Malphage");             // 128
-		settings.Add("eidolon", true "Eidolon");               // 135
-		settings.Add("tybrious", true "Tybrious");             // 153
-		settings.Add("memloch", true "Memloch");               // 138
-		settings.Add("fray", true "Fray");                     // 155
-		settings.Add("alius", true "Illusion Alius");          // 242
-		settings.Add("amaryllis", true "Amaryllis");           // 177
-		settings.Add("charon", true "Charon");                 // 247
-		settings.Add("jezbelle", true "Jezbelle");             // 217 
-		settings.Add("jethro", true "Jethro");                 // 239
-		settings.Add("cyril", true "Cyril");                   // 271
-		settings.Add("vassago", true "Vassago");               // 174
-		settings.Add("tahlia", true "Tahlia");                 // 290
-		settings.Add("revenance", true "Revenance");           // 294
+	settings.Add("sigils", true, "Sigils");
+	settings.CurrentDefaultParent = "bosses";         // Boss End ID
+		settings.Add("ribauld", true, "Ribauld");              // 120
+		settings.Add("vena", true, "Vena");                    // 292
+		settings.Add("caprice", true, "Caprice");              // 125
+		settings.Add("lily", true, "Lily");                    // 121
+		settings.Add("katu", true, "Katu");                    // 124
+		settings.Add("roleo", true, "Roleo");                  // 127
+		settings.Add("malphage", true, "Malphage");            // 128
+		settings.Add("thetis", true, "Thetis");                // 129
+		settings.Add("frankie", true, "Frankie");              // 126
+		settings.Add("barados", true, "Barados");              // 123
+		settings.Add("tybrious", true, "Tybrious");            // 153
+		settings.Add("fray", true, "Fray");                    // 155
+		settings.Add("eidolon", true, "Eidolon");              // 135
+		settings.Add("memloch", true, "Memloch");              // 138
+		settings.Add("vassago", true, "Vassago");              // 174
+		settings.Add("amaryllis", true, "Amaryllis");          // 177
+		settings.Add("jezbelle", true, "Jezbelle");            // 217 
+		settings.Add("jethro", true, "Jethro");                // 239
+		settings.Add("alius", true, "Illusion Alius");         // 242
+		settings.Add("charon", true, "Charon");                // 247
+		settings.Add("cyril", true, "Cyril");                  // 271
+		settings.Add("tahlia", true, "Tahlia");                // 290
+		settings.Add("revenance", true, "Revenance");          // 294
 	settings.CurrentDefaultParent = "items";               // Item ID
 		settings.Add("lineBomb", false, "Cross Bomb");          // 24
 		settings.Add("areaBomb", false, "Cluster Bomb");        // 25
@@ -51,6 +53,8 @@ startup
 		settings.Add("waterMovement", false, "Hydrodynamo");    // 33
 		settings.Add("tempRing", false, "Equilibrium Ring");    // 48
 		settings.Add("rotater", false, "Vortex Gloves");        // 63
+	settings.CurrentDefaultParent = "sigils";             // Sigil ID
+		settings.Add("bloodLust", true, "Blood Lust");         // 266
 }
 
 init
@@ -109,9 +113,12 @@ start
 
 reset
 {
-	// TODO: maybe reset when title music plays?
 	/*
-	if (TODO) {
+		Resets the timer when the title music plays.
+		Disable this feature if you're running
+		a category where save & quit is involved.
+	*//*
+	if (current.songID == 3) {
 		vars.timer = 0;
 		vars.timerIncrease = 0;
 		return true;
@@ -123,6 +130,125 @@ split
 {
 	// Checks if the game is reloading.
 	vars.reloading = current.runtime == 0 || (current.runtime < old.runtime);
+
+	/*
+		Splits the game when you beat a particular boss.
+		See https://rentry.co/TEVI_IDs#event-ids for event IDs
+	*/
+	if(settings["ribauld"]
+		&& current.eventArray[120] == 1
+		&& old.eventArray[120] == 0
+	){ print("Ribauld Split"); return true; }
+
+	if(settings["vena"]
+		&& current.eventArray[292] == 1
+		&& old.eventArray[292] == 0
+	){ print("Vena Split"); return true; }
+
+	if(settings["caprice"]
+		&& current.eventArray[125] == 1
+		&& old.eventArray[125] == 0
+	){ print("Caprice Split"); return true; }
+
+	if(settings["lily"]
+		&& current.eventArray[121] == 1
+		&& old.eventArray[121] == 0
+	){ print("Lily Split"); return true; }
+
+	if(settings["katu"]
+		&& current.eventArray[124] == 1
+		&& old.eventArray[124] == 0
+	){ print("Katu Split"); return true; }
+
+	if(settings["roleo"]
+		&& current.eventArray[127] == 1
+		&& old.eventArray[127] == 0
+	){ print("Roleo Split"); return true; }
+
+	if(settings["malphage"]
+		&& current.eventArray[128] == 1
+		&& old.eventArray[128] == 0
+	){ print("Malphage Split"); return true; }
+
+	if(settings["thetis"]
+		&& current.eventArray[129] == 1
+		&& old.eventArray[129] == 0
+	){ print("Thetis Split"); return true; }
+
+	if(settings["frankie"]
+		&& current.eventArray[126] == 1
+		&& old.eventArray[126] == 0
+	){ print("Frankie Split"); return true; }
+
+	if(settings["barados"]
+		&& current.eventArray[123] == 1
+		&& old.eventArray[123] == 0
+	){ print("Barados Split"); return true; }
+
+	if(settings["tybrious"]
+		&& current.eventArray[153] == 1
+		&& old.eventArray[153] == 0
+	){ print("Tybrious Split"); return true; }
+
+	if(settings["fray"]
+		&& current.eventArray[155] == 1
+		&& old.eventArray[155] == 0
+	){ print("Fray Split"); return true; }
+
+	if(settings["eidolon"]
+		&& current.eventArray[135] == 1
+		&& old.eventArray[135] == 0
+	){ print("Eidolon Split"); return true; }
+
+	if(settings["memloch"]
+		&& current.eventArray[138] == 1
+		&& old.eventArray[138] == 0
+	){ print("Memloch Split"); return true; }
+
+	if(settings["vassago"]
+		&& current.eventArray[174] == 1
+		&& old.eventArray[174] == 0
+	){ print("Vassago Split"); return true; }
+
+	if(settings["amaryllis"]
+		&& current.eventArray[177] == 1
+		&& old.eventArray[177] == 0
+	){ print("Amaryllis Split"); return true; }
+
+	if(settings["jezbelle"]
+		&& current.eventArray[217] == 1
+		&& old.eventArray[217] == 0
+	){ print("Jezbelle Split"); return true; }
+
+	if(settings["jethro"]
+		&& current.eventArray[239] == 1
+		&& old.eventArray[239] == 0
+	){ print("Jethro Split"); return true; }
+
+	if(settings["alius"]
+		&& current.eventArray[242] == 1
+		&& old.eventArray[242] == 0
+	){ print("Alius Split"); return true; }
+
+	if(settings["charon"]
+		&& current.eventArray[247] == 1
+		&& old.eventArray[247] == 0
+	){ print("Charon Split"); return true; }
+
+	if(settings["cyril"]
+		&& current.eventArray[271] == 1
+		&& old.eventArray[271] == 0
+	){ print("Cyril Split"); return true; }
+
+	if(settings["tahlia"]
+		&& current.eventArray[290] == 1
+		&& old.eventArray[290] == 0
+	){ print("Tahlia Split"); return true; }
+
+	if(settings["revenance"]
+		&& current.eventArray[294] == 1
+		&& old.eventArray[294] == 0
+	){ print("Revenance Split"); return true; }
 
 	/*
 		Splits the game when you obtain a particular item.
@@ -207,6 +333,15 @@ split
 		&& current.itemArray[64] == 1
 		&& old.itemArray[64] == 0
 	){ print("Airy Powder Split"); return true; }
+
+	/*
+		Splits the game when you obtain a particular sigil.
+		See https://rentry.co/TEVI_IDs#item-ids for item IDs
+	*/
+	if(settings["bloodLust"]
+		&& current.itemArray[266] == 1
+		&& old.itemArray[266] == 0
+	){ print("Blood Lust Split"); return true; }
 
 	return false;
 }
