@@ -134,7 +134,7 @@ split
 
 	// TEVI tends to reassign its arrays, so this will avoid null object errors.
 	if (current.eventArray == null || old.eventArray == null || current.itemArray == null || old.itemArray == null)
-    	return false;
+		return false;
 
 	/*
 		Splits the game when you beat a particular boss.
