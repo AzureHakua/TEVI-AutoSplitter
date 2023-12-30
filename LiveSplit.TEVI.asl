@@ -44,7 +44,7 @@ startup
 		settings.Add("hiJump", false, "Rabi Boots");            // 27
 		settings.Add("wallJump", false, "Wall Jump");           // 30
 		settings.Add("doubleJump", false, "Double Jump");       // 31
-		settings.Add("jetpack", false, "Jetpack");              // 32
+		settings.Add("jetpack", true, "Jetpack");              // 32
 		settings.Add("slide", true, "Slide");                   // 29
 		settings.Add("airSlide", false, "Airy Powder");         // 64
 		settings.Add("airDash", true, "Air Dash");              // 42
@@ -55,6 +55,7 @@ startup
 		settings.Add("rotater", false, "Vortex Gloves");        // 63
 	settings.CurrentDefaultParent = "sigils";             // Sigil ID
 		settings.Add("bloodLust", true, "Blood Lust");         // 266
+		settings.Add("heroCall", true, "Hero Call");           // 237
 }
 
 init
@@ -342,6 +343,11 @@ split
 		&& current.itemArray[266] == 1
 		&& old.itemArray[266] == 0
 	){ print("Blood Lust Split"); return true; }
+
+	if(settings["heroCall"]
+		&& current.itemArray[237] == 1
+		&& old.itemArray[237] == 0
+	){ print("Hero Call Split"); return true; }
 
 	return false;
 }
