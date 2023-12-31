@@ -57,6 +57,12 @@ startup
     vars.Music = new ExpandoObject();
         vars.Music.OFF = 0;
         vars.Music.MAINTHEME = 3;
+    
+    vars.TIMERFAILSAFE = 5;
+    vars.timer = 0;
+    vars.timerIncrease = 0;
+    vars.triggeredEvents = new bool[400];
+    vars.triggeredItems = new bool[500];
 }
 
 init
@@ -66,15 +72,9 @@ init
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
         vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
-
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
-
         return true;
     });
-
-    vars.timer = 0;
-    vars.timerIncrease = 0;
-    vars.TIMERFAILSAFE = 5;
 }
 
 start
@@ -85,9 +85,11 @@ start
         then do not start the timer yet.
     */
     if (0f < current.Runtime && current.Runtime < 1f && old.Runtime == 0f) {
-        print ("Start LiveSplit");
+        print ("Start LiveSplit, Variables Reset");
         vars.timer = 0;
         vars.timerIncrease = 0;
+        vars.triggeredEvents = new bool[400];
+        vars.triggeredItems = new bool[500];
         return true;
     }
     return false;
@@ -104,9 +106,11 @@ split
     {
         string id = "e" + i;
         if (settings.ContainsKey(id) && settings[id]
-            && !oEvents[i] && cEvents[i])
+            && !oEvents[i] && cEvents[i]
+            && !vars.triggeredEvents[i])
         {
             print("Split at Event: " + id);
+            vars.triggeredEvents[i] = true;
             return true;
         }
     }
@@ -120,9 +124,11 @@ split
     {
         string id = "i" + i;
         if (settings.ContainsKey(id) && settings[id]
-            && !oItems[i] && cItems[i])
+            && !oItems[i] && cItems[i]
+            && !vars.triggeredItems[i])
         {
             print("Split at Item: " + id);
+            vars.triggeredItems[i] = true;
             return true;
         }
     }
@@ -137,9 +143,11 @@ reset
     */
     if (old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME)
     {
-        print("Reset LiveSplit");
+        print("Reset LiveSplit, Variables Reset");
         vars.timer = 0;
         vars.timerIncrease = 0;
+        vars.triggeredEvents = new bool[400];
+        vars.triggeredItems = new bool[500];
         return true;
     }
     return false;
