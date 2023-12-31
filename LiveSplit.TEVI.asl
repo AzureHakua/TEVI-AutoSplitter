@@ -48,8 +48,8 @@ startup
             { "i48", false, "Equilibrium Ring", "items" },
             { "i63", false, "Vortex Gloves", "items" },
         { "sigils", true, "Sigils", null },
-            { "s266", true, "Blood Lust", "sigils" },
-            { "s237", true, "Hero Call", "sigils" }
+            { "i266", true, "Blood Lust", "sigils" },
+            { "i237", true, "Hero Call", "sigils" }
     };
 
     vars.Helper.Settings.Create(_settings);
@@ -63,8 +63,7 @@ init
 {
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
-        // vars.Helper["Playtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "playtime");
-        vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "runtime");
+        vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
         vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
 
@@ -72,11 +71,22 @@ init
 
         return true;
     });
+
+    vars.timer = 0;
+    vars.timerIncrease = 0;
+    vars.TIMERFAILSAFE = 5;
 }
 
 start
 {
-    return old.Runtime == 0f && current.Runtime > 0f;
+    if (0f < current.Runtime && current.Runtime < 1f && old.Runtime == 0f) {
+        print ("Start LiveSplit");
+        vars.timer = 0;
+        vars.timerIncrease = 0;
+        vars.TIMERFAILSAFE = 5;
+        return true;
+    }
+    return false;
 }
 
 split
@@ -88,6 +98,7 @@ split
         if (settings.ContainsKey(id) && settings[id]
             && !oEvents[i] && cEvents[i])
         {
+            print("Split at Event: " + id);
             return true;
         }
     }
@@ -99,6 +110,7 @@ split
         if (settings.ContainsKey(id) && settings[id]
             && !oItems[i] && cItems[i])
         {
+            print("Split at Item: " + id);
             return true;
         }
     }
@@ -106,12 +118,32 @@ split
 
 reset
 {
-    return old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME;
+    /*
+        Resets when the title music plays.
+        Disable this feature if you're running
+        a category where save & quit is involved.
+    */
+    if (old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME)
+    {
+        print("Reset LiveSplit");
+        vars.timer = 0;
+        vars.timerIncrease = 0;
+        vars.TIMERFAILSAFE = 5;
+        return true;
+    }
+    return false;
 }
 
 gameTime
 {
-    return TimeSpan.FromSeconds(current.Runtime);
+    vars.timerIncrease = current.Runtime - old.Runtime;
+    
+    if(vars.timerIncrease < 0 || vars.timerIncrease > vars.TIMERFAILSAFE)
+        vars.timerIncrease = 0;
+
+    vars.timer += vars.timerIncrease;
+
+    return TimeSpan.FromSeconds(vars.timer);
 }
 
 isLoading
