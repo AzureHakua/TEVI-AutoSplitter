@@ -112,9 +112,9 @@ split
     }
 
     /*
-		Splits the game when you obtain a particular item.
-		See https://rentry.co/TEVI_IDs#item-ids for item IDs
-	*/
+        Splits the game when you obtain a particular item.
+        See https://rentry.co/TEVI_IDs#item-ids for item IDs
+    */
     bool[] oItems = old.Items, cItems = current.Items;
     for (int i = 0; i < cItems.Length; i++)
     {
