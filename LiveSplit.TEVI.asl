@@ -79,11 +79,15 @@ init
 
 start
 {
+    /*
+        Starts the timer when game time starts.
+        If the game time jump is more than 1s,
+        then do not start the timer yet.
+    */
     if (0f < current.Runtime && current.Runtime < 1f && old.Runtime == 0f) {
         print ("Start LiveSplit");
         vars.timer = 0;
         vars.timerIncrease = 0;
-        vars.TIMERFAILSAFE = 5;
         return true;
     }
     return false;
@@ -91,6 +95,10 @@ start
 
 split
 {
+    /*
+        Splits the game when you beat a particular boss.
+        See https://rentry.co/TEVI_IDs#event-ids for event IDs
+    */
     bool[] oEvents = old.Events, cEvents = current.Events;
     for (int i = 0; i < cEvents.Length; i++)
     {
@@ -103,6 +111,10 @@ split
         }
     }
 
+    /*
+		Splits the game when you obtain a particular item.
+		See https://rentry.co/TEVI_IDs#item-ids for item IDs
+	*/
     bool[] oItems = old.Items, cItems = current.Items;
     for (int i = 0; i < cItems.Length; i++)
     {
@@ -128,7 +140,6 @@ reset
         print("Reset LiveSplit");
         vars.timer = 0;
         vars.timerIncrease = 0;
-        vars.TIMERFAILSAFE = 5;
         return true;
     }
     return false;
@@ -136,6 +147,11 @@ reset
 
 gameTime
 {
+    /*
+        Tracks the timer increase separately to account for reloads / timer resets.
+        If the difference is negative or greater than the failsafe, throw it out.
+        Otherwise, add the increase to the overall timer and output it.
+    */ 
     vars.timerIncrease = current.Runtime - old.Runtime;
     
     if(vars.timerIncrease < 0 || vars.timerIncrease > vars.TIMERFAILSAFE)
