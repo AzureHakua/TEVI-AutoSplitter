@@ -62,10 +62,8 @@ startup
     vars.Music = new ExpandoObject();
         vars.Music.OFF = 0;
         vars.Music.MAINTHEME = 3;
-    
-    vars.TIMERFAILSAFE = 5;
+
     vars.timer = 0;
-    vars.timerIncrease = 0;
     vars.triggeredEvents = new bool[400];
     vars.triggeredItems = new bool[500];
     vars.triggeredGears = new bool[100];
@@ -91,16 +89,22 @@ start
         If the game time jump is more than 1s,
         then do not start the timer yet.
     */
-    if (0f < current.Runtime && current.Runtime < 1f && old.Runtime == 0f) {
-        print ("Start LiveSplit, Variables Reset");
-        vars.timer = 0;
-        vars.timerIncrease = 0;
-        vars.triggeredEvents = new bool[400];
-        vars.triggeredItems = new bool[500];
-        vars.triggeredGears = new bool[100];
+    if (0f < current.Runtime && current.Runtime < 1f && old.Runtime == 0f)
+    {
+        print (">>> Start LiveSplit");
         return true;
     }
     return false;
+}
+
+onStart
+{
+    // Resets all the variables on start.
+    print (">>> Variables Reset");
+    vars.timer = 0;
+    vars.triggeredEvents = new bool[400];
+    vars.triggeredItems = new bool[500];
+    vars.triggeredGears = new bool[100];
 }
 
 split
@@ -117,7 +121,7 @@ split
             && !oEvents[i] && cEvents[i]
             && !vars.triggeredEvents[i])
         {
-            print("Split at Event: " + id);
+            print(">>> Split at Event: " + id);
             vars.triggeredEvents[i] = true;
             return true;
         }
@@ -135,7 +139,7 @@ split
             && !oItems[i] && cItems[i]
             && !vars.triggeredItems[i])
         {
-            print("Split at Item: " + id);
+            print(">>> Split at Item: " + id);
             vars.triggeredItems[i] = true;
             return true;
         }
@@ -153,7 +157,7 @@ split
             && !oGears[i] && cGears[i]
             && !vars.triggeredGears[i])
         {
-            print("Split at Gear: " + id);
+            print(">>> Split at Gear: " + id);
             vars.triggeredGears[i] = true;
             return true;
         }
@@ -169,12 +173,7 @@ reset
     */
     if (old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME)
     {
-        print("Reset LiveSplit, Variables Reset");
-        vars.timer = 0;
-        vars.timerIncrease = 0;
-        vars.triggeredEvents = new bool[400];
-        vars.triggeredItems = new bool[500];
-        vars.triggeredGears = new bool[100];
+        print(">>> Reset LiveSplit");
         return true;
     }
     return false;
@@ -183,17 +182,10 @@ reset
 gameTime
 {
     /*
-        Tracks the timer increase separately to account for reloads / timer resets.
-        If the difference is negative or greater than the failsafe, throw it out.
-        Otherwise, add the increase to the overall timer and output it.
-    */ 
-    vars.timerIncrease = current.Runtime - old.Runtime;
-    
-    if(vars.timerIncrease < 0 || vars.timerIncrease > vars.TIMERFAILSAFE)
-        vars.timerIncrease = 0;
-
-    vars.timer += vars.timerIncrease;
-
+        Tracks the timer using TEVI's T. Runtime variable.
+        Only displays the max to keep LiveSplit looking nice.
+    */
+    vars.timer = Math.Max(current.Runtime, vars.timer);
     return TimeSpan.FromSeconds(vars.timer);
 }
 
