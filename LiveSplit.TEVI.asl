@@ -42,7 +42,7 @@ startup
             { "i29", true, "Slide", "items" },
             { "i64", false, "Airy Powder", "items" },
             { "i42", true, "Air Dash", "items" },
-            { "i35", true, "Decay Mask", "items" },
+            { "i35", false, "Decay Mask", "items" },
             { "i40", false, "Decay Potion", "items" },
             { "i33", false, "Hydrodynamo", "items" },
             { "i48", false, "Equilibrium Ring", "items" },
