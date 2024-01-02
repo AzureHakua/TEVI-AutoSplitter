@@ -5,7 +5,7 @@ General Notes
 ===  
 - The TEVI Auto Splitter uses asl-help for its Unity functionality. It can auto start and reset runs, and it can split on bosses and items using the event and item flags. Music is also tracked and can be used as additional split checks.
 - If you need to add additional splits, you can do so relatively easily by finding the proper IDs listed [here](https://rentry.co/TEVI_IDs).
-- IGT is tracked automatically. You can check this by comparing to game time or by using the 'Alternative Timing Method' component of LiveSplit found [here]( https://github.com/Dalet/LiveSplit.AlternateTimingMethod/releases).
+- IGT is tracked automatically. You can check this by comparing to game time or by using the `Alternative Timing Method` component of LiveSplit found [here]( https://github.com/Dalet/LiveSplit.AlternateTimingMethod/releases).
 
 How to Use
 ===
