@@ -49,7 +49,12 @@ startup
             { "i63", false, "Vortex Gloves", "items" },
         { "sigils", true, "Sigils", null },
             { "i266", true, "Blood Lust", "sigils" },
-            { "i237", true, "Hero Call", "sigils" }
+            { "i237", true, "Hero Call", "sigils" },
+        { "gears", true, "Gears", null },
+            { "g0", true, "Desert Base", "gears" },
+            { "g4", true, "Magma Depths", "gears" },
+            { "g5", true, "Gallery of Mirrors", "gears" },
+            { "g6", true, "Blushwood", "gears" }
     };
 
     vars.Helper.Settings.Create(_settings);
@@ -63,6 +68,7 @@ startup
     vars.timerIncrease = 0;
     vars.triggeredEvents = new bool[400];
     vars.triggeredItems = new bool[500];
+    vars.triggeredGears = new bool[100];
 }
 
 init
@@ -72,6 +78,7 @@ init
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
         vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
+        vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
         return true;
     });
@@ -90,6 +97,7 @@ start
         vars.timerIncrease = 0;
         vars.triggeredEvents = new bool[400];
         vars.triggeredItems = new bool[500];
+        vars.triggeredGears = new bool[100];
         return true;
     }
     return false;
@@ -132,6 +140,24 @@ split
             return true;
         }
     }
+
+    /*
+        Splits the game when you obtain a particular stackable.
+        Index 0-63 are Gears
+    */
+    bool[] oGears = old.Gears, cGears = current.Gears;
+    for (int i = 0; i < cGears.Length; i++)
+    {
+        string id = "g" + i;
+        if (settings.ContainsKey(id) && settings[id]
+            && !oGears[i] && cGears[i]
+            && !vars.triggeredGears[i])
+        {
+            print("Split at Gear: " + id);
+            vars.triggeredGears[i] = true;
+            return true;
+        }
+    }
 }
 
 reset
@@ -148,6 +174,7 @@ reset
         vars.timerIncrease = 0;
         vars.triggeredEvents = new bool[400];
         vars.triggeredItems = new bool[500];
+        vars.triggeredGears = new bool[100];
         return true;
     }
     return false;
