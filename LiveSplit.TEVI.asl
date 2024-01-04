@@ -83,7 +83,6 @@ init
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
-        // vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
         vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
@@ -135,39 +134,24 @@ split
     }
 
     /*
-        /!\ Deprecated: Please use the above code for events if possible. /!\
-        Splits the game when an event flag is set to true.
-        See https://rentry.co/TEVI_IDs#event-ids for event IDs.
-    */   /*
-    bool[] oEvents = old.Events, cEvents = current.Events;
-    for (int i = 0; i < cEvents.Length; i++)
-    {
-        string id = "e" + i;
-        if (settings.ContainsKey(id) && settings[id]
-            && !oEvents[i] && cEvents[i]
-            && !vars.triggeredEvents[i])
-        {
-            print(">>> Split at Event: " + id);
-            vars.triggeredEvents[i] = true;
-            return true;
-        }
-    }*/
-
-    /*
         Splits the game when you obtain a particular item.
         See https://rentry.co/TEVI_IDs#item-ids for item IDs.
     */
-    bool[] oItems = old.Items, cItems = current.Items;
-    for (int i = 0; i < cItems.Length; i++)
+    if (((IDictionary<string, object>)old).ContainsKey("Items") &&
+        ((IDictionary<string, object>)current).ContainsKey("Items"))
     {
-        string id = "i" + i;
-        if (settings.ContainsKey(id) && settings[id]
-            && !oItems[i] && cItems[i]
-            && !vars.triggeredItems[i])
+        bool[] oItems = old.Items, cItems = current.Items;
+        for (int i = 0; i < cItems.Length; i++)
         {
-            print(">>> Split at Item: " + id);
-            vars.triggeredItems[i] = true;
-            return true;
+            string id = "i" + i;
+            if (settings.ContainsKey(id) && settings[id]
+                && !oItems[i] && cItems[i]
+                && !vars.triggeredItems[i])
+            {
+                print(">>> Split at Item: " + id);
+                vars.triggeredItems[i] = true;
+                return true;
+            }
         }
     }
 
@@ -175,17 +159,21 @@ split
         Splits the game when you obtain a particular stackable.
         Index 0-63 are Gears.
     */
-    bool[] oGears = old.Gears, cGears = current.Gears;
-    for (int i = 0; i < cGears.Length; i++)
+    if (((IDictionary<string, object>)old).ContainsKey("Gears") &&
+        ((IDictionary<string, object>)current).ContainsKey("Gears"))
     {
-        string id = "g" + i;
-        if (settings.ContainsKey(id) && settings[id]
-            && !oGears[i] && cGears[i]
-            && !vars.triggeredGears[i])
+        bool[] oGears = old.Gears, cGears = current.Gears;
+        for (int i = 0; i < cGears.Length; i++)
         {
-            print(">>> Split at Gear: " + id);
-            vars.triggeredGears[i] = true;
-            return true;
+            string id = "g" + i;
+            if (settings.ContainsKey(id) && settings[id]
+                && !oGears[i] && cGears[i]
+                && !vars.triggeredGears[i])
+            {
+                print(">>> Split at Gear: " + id);
+                vars.triggeredGears[i] = true;
+                return true;
+            }
         }
     }
 }
@@ -197,10 +185,14 @@ reset
         Disable this feature if you're running
         a category where save & quit is involved.
     */
-    if (old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME)
+    if (((IDictionary<string, object>)old).ContainsKey("Music") &&
+        ((IDictionary<string, object>)current).ContainsKey("Music"))
     {
-        print(">>> Reset LiveSplit");
-        return true;
+        if (old.Music == vars.Music.OFF && current.Music == vars.Music.MAINTHEME)
+        {
+            print(">>> Reset LiveSplit");
+            return true;
+        }
     }
     return false;
 }
