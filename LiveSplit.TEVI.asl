@@ -54,7 +54,16 @@ startup
             { "g0", true, "Desert Base", "gears" },
             { "g4", true, "Magma Depths", "gears" },
             { "g5", true, "Gallery of Mirrors", "gears" },
-            { "g6", true, "Blushwood", "gears" }
+            { "g6", true, "Blushwood", "gears" },
+        { "chapters", true, "Chapters", null },
+            { "e34", false, "Chapter 1", "chapters" },  // After Return Home
+            { "e54", false, "Chapter 2", "chapters" },  // After Lily
+            { "e62", false, "Chapter 3", "chapters" },  // After CC Shop
+            { "e100", false, "Chapter 4", "chapters" }, // After Frankie
+            { "e190", false, "Chapter 5", "chapters" }, // After Tybrious
+            { "e156", false, "Chapter 6", "chapters" }, // After Magma Gear
+            { "e208", false, "Chapter 7", "chapters" }, // After Amaryllis
+            { "e264", false, "Chapter 8", "chapters" }  // After Dreamer's Keep
     };
 
     vars.Helper.Settings.Create(_settings);
@@ -74,10 +83,11 @@ init
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
-        vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
+        // vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
         vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
+        vars.Helper["EventMode"] = mono.Make<int>("EventManager", "Instance", "_Mode");
         return true;
     });
 }
@@ -110,9 +120,25 @@ onStart
 split
 {
     /*
-        Splits the game when you beat a particular boss.
-        See https://rentry.co/TEVI_IDs#event-ids for event IDs
+        Splits the game when an event begins.
+        See https://rentry.co/TEVI_IDs#event-ids for event IDs.
     */
+    int cEvent = current.EventMode;
+    string eid = "e" + cEvent;
+    if (settings.ContainsKey(eid) && settings[eid]
+        && old.EventMode != cEvent && current.EventMode == cEvent
+        && !vars.triggeredEvents[cEvent])
+    {
+        print(">>> Split at Event: " + eid);
+        vars.triggeredEvents[cEvent] = true;
+        return true;
+    }
+
+    /*
+        /!\ Deprecated: Please use the above code for events if possible. /!\
+        Splits the game when an event flag is set to true.
+        See https://rentry.co/TEVI_IDs#event-ids for event IDs.
+    */   /*
     bool[] oEvents = old.Events, cEvents = current.Events;
     for (int i = 0; i < cEvents.Length; i++)
     {
@@ -125,11 +151,11 @@ split
             vars.triggeredEvents[i] = true;
             return true;
         }
-    }
+    }*/
 
     /*
         Splits the game when you obtain a particular item.
-        See https://rentry.co/TEVI_IDs#item-ids for item IDs
+        See https://rentry.co/TEVI_IDs#item-ids for item IDs.
     */
     bool[] oItems = old.Items, cItems = current.Items;
     for (int i = 0; i < cItems.Length; i++)
@@ -147,7 +173,7 @@ split
 
     /*
         Splits the game when you obtain a particular stackable.
-        Index 0-63 are Gears
+        Index 0-63 are Gears.
     */
     bool[] oGears = old.Gears, cGears = current.Gears;
     for (int i = 0; i < cGears.Length; i++)
