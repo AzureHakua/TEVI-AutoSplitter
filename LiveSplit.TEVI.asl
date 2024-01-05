@@ -83,10 +83,11 @@ init
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
+        vars.Helper["EventMode"] = mono.Make<int>("EventManager", "Instance", "_Mode");
+        vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
         vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
-        vars.Helper["EventMode"] = mono.Make<int>("EventManager", "Instance", "_Mode");
         return true;
     });
 }
@@ -131,6 +132,28 @@ split
         print(">>> Split at Event: " + eid);
         vars.triggeredEvents[cEvent] = true;
         return true;
+    }
+
+     /*
+        Splits the game when a particular event flag is set.
+        See https://rentry.co/TEVI_IDs#event-ids for event IDs.
+    */
+    if (((IDictionary<string, object>)old).ContainsKey("Events") &&
+        ((IDictionary<string, object>)current).ContainsKey("Events"))
+    {
+        bool[] oEvents = old.Events, cEvents = current.Events;
+        for (int i = 0; i < cEvents.Length; i++)
+        {
+            string id = "e" + i;
+            if (settings.ContainsKey(id) && settings[id]
+                && !oEvents[i] && cEvents[i]
+                && !vars.triggeredEvents[i])
+            {
+                print(">>> Split at Event Flag: " + id);
+                vars.triggeredEvents[i] = true;
+                return true;
+            }
+        }
     }
 
     /*
