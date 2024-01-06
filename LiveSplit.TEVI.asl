@@ -101,10 +101,14 @@ start
     /*
         Starts the timer when selecting a new game.
     */
-    if (current.NewGame == true && old.NewGame == false)
+    if (((IDictionary<string, object>)old).ContainsKey("NewGame") &&
+        ((IDictionary<string, object>)current).ContainsKey("NewGame"))
     {
-        print (">>> Start LiveSplit");
-        return true;
+        if (current.NewGame == true && old.NewGame == false)
+        {
+            print (">>> Start LiveSplit");
+            return true;
+        }
     }
     return false;
 }
@@ -182,8 +186,8 @@ split
         Splits the game when a particular event flag is set.
         See https://rentry.co/TEVI_IDs#event-ids for event IDs.
     */   /*
-    if (((IDictionary<string, object>)old).ContainsKey("Events") &&
-        ((IDictionary<string, object>)current).ContainsKey("Events"))
+    if (((IDictionary<string, object>)old).ContainsKey("EventList") &&
+        ((IDictionary<string, object>)current).ContainsKey("EventList"))
     {
         bool[] oEventList = old.EventList, cEventList = current.EventList;
         for (int i = 0; i < cEventList.Length; i++)
