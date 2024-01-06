@@ -73,7 +73,7 @@ startup
         vars.Music.MAINTHEME = 3;
 
     vars.Timer = 0;
-    // vars.TriggeredEvents = new bool[400];
+    vars.TriggeredEvents = new bool[400];
     vars.TriggeredItems = new bool[500];
     vars.TriggeredGears = new bool[100];
 }
@@ -115,7 +115,7 @@ onStart
     */
     print (">>> Variables Reset");
     vars.Timer = 0;
-    // vars.TriggeredEvents = new bool[400];
+    vars.TriggeredEvents = new bool[400];
     vars.TriggeredItems = new bool[500];
     vars.TriggeredGears = new bool[100];
 }
