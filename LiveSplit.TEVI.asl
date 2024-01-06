@@ -82,15 +82,15 @@ init
 {
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
+        vars.Helper["Start"] = mono.Make<bool>("GemaTitleScreenManager", "Instance", "gemanewgame", "isEntering");
         vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
+        vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
         vars.Helper["EventMode"] = mono.Make<int>("EventManager", "Instance", "_Mode");
         vars.Helper["Area"] = mono.Make<byte>("WorldManager", "Instance", "Area");
         vars.Helper["RoomBG"] = mono.Make<int>("WorldManager", "Instance", "CurrentRoomBG");
         // vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
         vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
-        vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
-        vars.Helper["Start"] = mono.Make<bool>("GemaTitleScreenManager", "Instance", "gemanewgame", "isEntering");
         return true;
     });
 }
@@ -145,7 +145,7 @@ split
             { 24, 125 },  // Caprice
             { 25, (roomBG == 61) ? 174 : 155 },   // Vassago, Fray
             { 26, 153 },  // Tybrius
-            { 27, (roomBG == 72) ? 126 : -1 },    // Frankie, Memloch
+            { 27, (roomBG == 72) ? 126 : -1 },    // Frankie, Memloch not used
             { 29, 177 }   // Amaryllis
         };
 
