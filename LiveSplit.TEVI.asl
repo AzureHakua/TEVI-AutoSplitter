@@ -51,10 +51,10 @@ startup
             { "i266", true, "Blood Lust", "sigils" },
             { "i237", true, "Hero Call", "sigils" },
         { "gears", true, "Gears", null },
-            { "g0", true, "Desert Base", "gears" },
-            { "g4", true, "Magma Depths", "gears" },
-            { "g5", true, "Gallery of Mirrors", "gears" },
-            { "g6", true, "Blushwood", "gears" },
+            { "s0", true, "Desert Base", "gears" },
+            { "s4", true, "Magma Depths", "gears" },
+            { "s5", true, "Gallery of Mirrors", "gears" },
+            { "s6", true, "Blushwood", "gears" },
         { "chapters", true, "Chapters", null },
             { "e34", false, "Chapter 1", "chapters" },    // After Return Home
             { "e54", false, "Chapter 2", "chapters" },    // After Lily
@@ -82,15 +82,16 @@ init
 {
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
-        vars.Helper["Start"] = mono.Make<bool>("GemaTitleScreenManager", "Instance", "gemanewgame", "isEntering");
-        vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
+        vars.Helper["NewGame"] = mono.Make<bool>("GemaTitleScreenManager", "Instance", "gemanewgame", "isEntering");
+        vars.Helper["MapInit"] = mono.Make<bool>("WorldManager", "Instance", "MapInited");
+        // vars.Helper["Runtime"] = mono.Make<float>("SaveManager", "Instance", "savedata", "truntime");
         vars.Helper["Music"] = mono.Make<byte>("MusicManager", "Instance", "lastMusic");
-        vars.Helper["EventMode"] = mono.Make<int>("EventManager", "Instance", "_Mode");
+        vars.Helper["Event"] = mono.Make<int>("EventManager", "Instance", "_Mode");
         vars.Helper["Area"] = mono.Make<byte>("WorldManager", "Instance", "Area");
         vars.Helper["RoomBG"] = mono.Make<int>("WorldManager", "Instance", "CurrentRoomBG");
-        // vars.Helper["Events"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
-        vars.Helper["Items"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
-        vars.Helper["Gears"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
+        // vars.Helper["EventList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
+        vars.Helper["ItemList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
+        vars.Helper["StackList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         return true;
     });
 }
@@ -100,7 +101,7 @@ start
     /*
         Starts the timer when selecting a new game.
     */
-    if (current.Start == true && old.Start == false)
+    if (current.NewGame == true && old.NewGame == false)
     {
         print (">>> Start LiveSplit");
         return true;
@@ -126,7 +127,7 @@ split
         Splits the game when an event begins.
         See https://rentry.co/TEVI_IDs#event-ids for event IDs.
     */
-    int oEvent = old.EventMode, cEvent = current.EventMode;
+    int oEvent = old.Event, cEvent = current.Event;
     if (cEvent == 349 && oEvent != cEvent)   // Handles END_BOOKMARK case for Free Roam.
     {
         int area = current.Area;
@@ -184,12 +185,12 @@ split
     if (((IDictionary<string, object>)old).ContainsKey("Events") &&
         ((IDictionary<string, object>)current).ContainsKey("Events"))
     {
-        bool[] oEvents = old.Events, cEvents = current.Events;
+        bool[] oEventList = old.EventList, cEventList = current.EventList;
         for (int i = 0; i < cEvents.Length; i++)
         {
             string id = "e" + i;
             if (settings.ContainsKey(id) && settings[id]
-                && !oEvents[i] && cEvents[i]
+                && !oEventList[i] && cEventList[i]
                 && !vars.TriggeredEvents[i])
             {
                 print(">>> Split at Event Flag: " + id);
@@ -203,15 +204,15 @@ split
         Splits the game when you obtain a particular item.
         See https://rentry.co/TEVI_IDs#item-ids for item IDs.
     */
-    if (((IDictionary<string, object>)old).ContainsKey("Items") &&
-        ((IDictionary<string, object>)current).ContainsKey("Items"))
+    if (((IDictionary<string, object>)old).ContainsKey("ItemList") &&
+        ((IDictionary<string, object>)current).ContainsKey("ItemList"))
     {
-        bool[] oItems = old.Items, cItems = current.Items;
+        bool[] oItemList = old.ItemList, cItemList = current.ItemList;
         for (int i = 0; i < cItems.Length; i++)
         {
             string id = "i" + i;
             if (settings.ContainsKey(id) && settings[id]
-                && !oItems[i] && cItems[i]
+                && !oItemList[i] && cItemList[i]
                 && !vars.TriggeredItems[i])
             {
                 print(">>> Split at Item: " + id);
@@ -225,15 +226,15 @@ split
         Splits the game when you obtain a particular stackable.
         Index 0-63 are Gears.
     */
-    if (((IDictionary<string, object>)old).ContainsKey("Gears") &&
-        ((IDictionary<string, object>)current).ContainsKey("Gears"))
+    if (((IDictionary<string, object>)old).ContainsKey("StackList") &&
+        ((IDictionary<string, object>)current).ContainsKey("StackList"))
     {
-        bool[] oGears = old.Gears, cGears = current.Gears;
+        bool[] oStackList = old.StackList, cStackList = current.StackList;
         for (int i = 0; i < cGears.Length; i++)
         {
-            string id = "g" + i;
+            string id = "s" + i;
             if (settings.ContainsKey(id) && settings[id]
-                && !oGears[i] && cGears[i]
+                && !oStackList[i] && cStackList[i]
                 && !vars.TriggeredGears[i])
             {
                 print(">>> Split at Gear: " + id);
@@ -263,17 +264,24 @@ reset
     return false;
 }
 
+
 gameTime
 {
     /*
+        NOTE: T.Runtime is currently bugged, using Map Init instead.
         Tracks the timer using TEVI's T. Runtime variable.
         Only displays the max to keep LiveSplit looking nice.
-    */
+    */   /*
     vars.Timer = Math.Max(current.Runtime, vars.Timer);
-    return TimeSpan.FromSeconds(vars.Timer);
+    return TimeSpan.FromSeconds(vars.Timer);   */
 }
 
 isLoading
 {
-    return true;
+    // If the map is not initialized, the game is loading.
+    if (!current.MapInit)
+    {
+        return true;
+    }
+    return false;
 }
