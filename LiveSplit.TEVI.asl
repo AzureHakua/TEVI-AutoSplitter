@@ -186,7 +186,7 @@ split
         ((IDictionary<string, object>)current).ContainsKey("Events"))
     {
         bool[] oEventList = old.EventList, cEventList = current.EventList;
-        for (int i = 0; i < cEvents.Length; i++)
+        for (int i = 0; i < cEventList.Length; i++)
         {
             string id = "e" + i;
             if (settings.ContainsKey(id) && settings[id]
@@ -208,7 +208,7 @@ split
         ((IDictionary<string, object>)current).ContainsKey("ItemList"))
     {
         bool[] oItemList = old.ItemList, cItemList = current.ItemList;
-        for (int i = 0; i < cItems.Length; i++)
+        for (int i = 0; i < cItemList.Length; i++)
         {
             string id = "i" + i;
             if (settings.ContainsKey(id) && settings[id]
@@ -230,7 +230,7 @@ split
         ((IDictionary<string, object>)current).ContainsKey("StackList"))
     {
         bool[] oStackList = old.StackList, cStackList = current.StackList;
-        for (int i = 0; i < cGears.Length; i++)
+        for (int i = 0; i < cStackList.Length; i++)
         {
             string id = "s" + i;
             if (settings.ContainsKey(id) && settings[id]
