@@ -56,14 +56,14 @@ startup
             { "g5", true, "Gallery of Mirrors", "gears" },
             { "g6", true, "Blushwood", "gears" },
         { "chapters", true, "Chapters", null },
-            { "e34", false, "Chapter 1", "chapters" },  // After Return Home
-            { "e54", false, "Chapter 2", "chapters" },  // After Lily
-            { "e62", false, "Chapter 3", "chapters" },  // After CC Shop
-            { "e100", false, "Chapter 4", "chapters" }, // After Frankie
-            { "e190", false, "Chapter 5", "chapters" }, // After Tybrious
-            { "e156", false, "Chapter 6", "chapters" }, // After Magma Gear
-            { "e208", false, "Chapter 7", "chapters" }, // After Amaryllis
-            { "e264", false, "Chapter 8", "chapters" }  // After Dreamer's Keep
+            { "e34", false, "Chapter 1", "chapters" },    // After Return Home
+            { "e54", false, "Chapter 2", "chapters" },    // After Lily
+            { "e62", false, "Chapter 3", "chapters" },    // After CC Shop
+            { "e100", false, "Chapter 4", "chapters" },   // After Frankie
+            { "e190", false, "Chapter 5", "chapters" },   // After Tybrious
+            { "e156", false, "Chapter 6", "chapters" },   // After Magma Gear
+            { "e208", false, "Chapter 7", "chapters" },   // After Amaryllis
+            { "e264", false, "Chapter 8", "chapters" }    // After Dreamer's Keep
     };
 
     vars.Helper.Settings.Create(_settings);
@@ -73,7 +73,7 @@ startup
         vars.Music.MAINTHEME = 3;
 
     vars.Timer = 0;
-    vars.TriggeredEvents = new bool[400];
+    // vars.TriggeredEvents = new bool[400];
     vars.TriggeredItems = new bool[500];
     vars.TriggeredGears = new bool[100];
 }
@@ -110,10 +110,12 @@ start
 
 onStart
 {
-    // Resets all the variables on start.
+    /* 
+        Resets all variables on start.
+    */
     print (">>> Variables Reset");
     vars.Timer = 0;
-    vars.TriggeredEvents = new bool[400];
+    // vars.TriggeredEvents = new bool[400];
     vars.TriggeredItems = new bool[500];
     vars.TriggeredGears = new bool[100];
 }
@@ -125,7 +127,7 @@ split
         See https://rentry.co/TEVI_IDs#event-ids for event IDs.
     */
     int oEvent = old.EventMode, cEvent = current.EventMode;
-    if (cEvent == 349 && oEvent != cEvent)   // Event 349 is END_BOOKMARK
+    if (cEvent == 349 && oEvent != cEvent)   // Handles END_BOOKMARK case for Free Roam.
     {
         int area = current.Area;
         int roomBG = current.RoomBG;
@@ -162,7 +164,7 @@ split
             }
         }
     }
-    else 
+    else   // Handles normal event start cases.
     {
         string id = "e" + cEvent;
         if (settings.ContainsKey(id) && settings[id]
