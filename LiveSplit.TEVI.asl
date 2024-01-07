@@ -47,6 +47,7 @@ startup
             { "i33", false, "Hydrodynamo", "items" },
             { "i48", false, "Equilibrium Ring", "items" },
             { "i63", false, "Vortex Gloves", "items" },
+            { "i53", false, "Shining Bangle", "items" },
         { "sigils", true, "Sigils", null },
             { "i266", true, "Blood Lust", "sigils" },
             { "i237", true, "Hero Call", "sigils" },
