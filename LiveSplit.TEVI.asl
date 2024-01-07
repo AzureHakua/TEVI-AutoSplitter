@@ -189,7 +189,7 @@ split
     /*
         Splits the game when a particular event flag is set.
         See https://rentry.co/TEVI_IDs#event-ids for event IDs.
-    */   /*
+    */
     if (((IDictionary<string, object>)old).ContainsKey("EventList") &&
         ((IDictionary<string, object>)current).ContainsKey("EventList"))
     {
@@ -206,7 +206,7 @@ split
                 return true;
             }
         }
-    }   */
+    }
 
     /*
         Splits the game when you obtain a particular item.
