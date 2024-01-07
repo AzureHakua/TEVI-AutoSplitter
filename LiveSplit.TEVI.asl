@@ -63,7 +63,11 @@ startup
             { "e190", false, "Chapter 5", "chapters" },   // After Tybrious
             { "e156", false, "Chapter 6", "chapters" },   // After Magma Gear
             { "e208", false, "Chapter 7", "chapters" },   // After Amaryllis
-            { "e264", false, "Chapter 8", "chapters" }    // After Dreamer's Keep
+            { "e264", false, "Chapter 8", "chapters" },   // After Dreamer's Keep
+        { "terrasphere", true, "Terraspheres", null },
+            { "e248", false, "Tartarus Terrasphere", "terrasphere" },
+            { "e249", false, "Vahalla Terrasphere", "terrasphere" },
+            { "e250", false, "Snowveil Terrasphere", "terrasphere" }
     };
 
     vars.Helper.Settings.Create(_settings);
@@ -89,7 +93,7 @@ init
         vars.Helper["Event"] = mono.Make<int>("EventManager", "Instance", "_Mode");
         vars.Helper["Area"] = mono.Make<byte>("WorldManager", "Instance", "Area");
         vars.Helper["RoomBG"] = mono.Make<int>("WorldManager", "Instance", "CurrentRoomBG");
-        // vars.Helper["EventList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
+        vars.Helper["EventList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "eventflag");
         vars.Helper["ItemList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "itemflag");
         vars.Helper["StackList"] = mono.MakeArray<bool>("SaveManager", "Instance", "savedata", "stackableItemList");
         return true;
@@ -185,7 +189,7 @@ split
     /*
         Splits the game when a particular event flag is set.
         See https://rentry.co/TEVI_IDs#event-ids for event IDs.
-    */   /*
+    */   
     if (((IDictionary<string, object>)old).ContainsKey("EventList") &&
         ((IDictionary<string, object>)current).ContainsKey("EventList"))
     {
@@ -202,7 +206,7 @@ split
                 return true;
             }
         }
-    }   */
+    }
 
     /*
         Splits the game when you obtain a particular item.
