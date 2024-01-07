@@ -63,7 +63,11 @@ startup
             { "e190", false, "Chapter 5", "chapters" },   // After Tybrious
             { "e156", false, "Chapter 6", "chapters" },   // After Magma Gear
             { "e208", false, "Chapter 7", "chapters" },   // After Amaryllis
-            { "e264", false, "Chapter 8", "chapters" }    // After Dreamer's Keep
+            { "e264", false, "Chapter 8", "chapters" },   // After Dreamer's Keep
+        { "terrasphere", true, "Terraspheres", null },
+            { "e248", false, "Tartarus Terrasphere", "terrasphere" },
+            { "e249", false, "Vahalla Terrasphere", "terrasphere" },
+            { "e250", false, "Snowveil Terrasphere", "terrasphere" }
     };
 
     vars.Helper.Settings.Create(_settings);
