@@ -68,7 +68,9 @@ startup
         { "terrasphere", true, "Terraspheres", null },
             { "e248", false, "Tartarus Terrasphere", "terrasphere" },
             { "e249", false, "Vahalla Terrasphere", "terrasphere" },
-            { "e250", false, "Snowveil Terrasphere", "terrasphere" }
+            { "e250", false, "Snowveil Terrasphere", "terrasphere" },
+        { "other", true, "Other Events", null },
+            { "e51", false, "C2 In Front Palace", "other" }
     };
 
     vars.Helper.Settings.Create(_settings);
